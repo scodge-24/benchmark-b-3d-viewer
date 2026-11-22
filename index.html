@@ -3,9 +3,9 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Trial 0 Overview</title>
+<title>Trial 0 overview</title>
 <link rel="icon" href="data:,">
-<meta name="description" content="An AI-assisted radiation shielding onboarding trial on the Kobayashi 3D benchmarks.">
+<meta name="description" content="Trial 0 tested whether an AI agent can set up and run a radiation shielding workflow on the OECD/NEA Kobayashi 3D benchmarks.">
 <style>
 :root{color-scheme:dark;--background:#0b0f17;--foreground:#e5e7eb;--card:#111827;--secondary:#1e293b;--border:#334155;
   --muted-foreground:#94a3b8;--primary:#3b82f6;--primary-foreground:#ffffff;
@@ -38,7 +38,8 @@ body{padding:max(12px, env(safe-area-inset-top)) max(12px, env(safe-area-inset-r
 *{box-sizing:border-box}
 body{margin:0;font:15px/1.55 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;-webkit-text-size-adjust:100%}
 main{max-width:960px;margin:0 auto}
-h1{font-size:1.6rem;line-height:1.25;margin:20px 0 6px}
+.kicker{margin:20px 0 0;font-size:.78rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--primary)}
+h1{font-size:1.6rem;line-height:1.25;margin:2px 0 6px}
 h2{font-size:1.05rem;margin:28px 0 10px}
 p{margin:8px 0}
 .lede{font-size:1.05rem}
@@ -48,6 +49,7 @@ p{margin:8px 0}
 .metric{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px 14px}
 .metric-val{font-size:1.3rem;font-weight:700;color:var(--success);font-variant-numeric:tabular-nums;line-height:1.2}
 .metric-sub{font-size:.82rem;color:var(--muted-foreground);margin-top:4px;line-height:1.4}
+.metrics-note{font-size:.85rem;max-width:78ch;margin-top:10px}
 .cards{display:grid;gap:10px}
 .card{display:block;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px;
   color:inherit;text-decoration:none;min-height:44px}
@@ -73,26 +75,34 @@ footer{margin-top:28px;padding-top:12px;border-top:1px solid var(--border);font-
 </style>
 </head>
 <body>
-<nav class="site-nav" aria-label="Trial 0 pages"><div class="site-nav__bar"><a href="index.html" aria-current="page">Overview</a><a href="sitting-2-playback.html">1. Sitting 2 Playback</a><a href="results.html">2. Benchmark B Results</a><a href="viewer-3d.html">3. 3D Field Viewer</a></div></nav><script>(function(){var b=document.querySelector('.site-nav__bar'),a=b&&b.querySelector('[aria-current]');if(a)b.scrollLeft=a.offsetLeft-(b.clientWidth-a.offsetWidth)/2;})();</script>
+<nav class="site-nav" aria-label="Trial 0 pages"><div class="site-nav__bar"><a href="index.html" aria-current="page">Overview</a><a href="sitting-2-playback.html">1. Setup playback</a><a href="results.html">2. Problem 3 results</a><a href="viewer-3d.html">3. 3D flux viewer</a></div></nav><script>(function(){var b=document.querySelector('.site-nav__bar'),a=b&&b.querySelector('[aria-current]');if(a)b.scrollLeft=a.offsetLeft-(b.clientWidth-a.offsetWidth)/2;})();</script>
 <main>
-<h1>Trial 0: teaching an AI agent a shielding workflow</h1>
+<p class="kicker">Trial 0</p>
+<h1>Teaching an AI agent a shielding workflow</h1>
 <div class="prose">
-<p class="lede">Can an AI agent, given a short onboarding guide and a practitioner's folder, set itself up to run radiation transport calculations and then solve a problem it has not seen? Trial 0 tested that on the OECD/NEA Kobayashi 3D benchmarks.</p>
-<p>Setup used Kobayashi Problem 1, a 100 cm cube with a source, a low-density void and a shield. The agent meshed the CAD with Gmsh, solved it with OpenSn discrete ordinates, and cross-checked it with OpenMC Monte Carlo in one-group multigroup mode. It packaged that workflow as a small set of tools, each with its own checks.</p>
-<p>The held-out test was Problem 3, a dog-leg duct through a shield. A fresh agent ran it end to end using only those tools. No reference answer was supplied and shell access was turned off. The results were then scored against the withheld benchmark table.</p>
+<p class="lede">Can an AI agent take a short written guide and a shielding engineer's problem folder, set up its own radiation transport workflow, and then solve a problem it has not seen? Trial 0 was a first test of that question on the OECD/NEA Kobayashi 3D benchmarks.</p>
+<p>Setup used Kobayashi Problem 1, a 100 cm cube with a source, a low-density void region, and a shield. The agent meshed the CAD with Gmsh and solved the problem with OpenSn, a discrete ordinates (S_N) code. It cross-checked the result with OpenMC Monte Carlo in one-group mode on DAGMC geometry. It then packaged the workflow as seven tools that refuse an input with a missing or wrong unit.</p>
+<p>The test was Kobayashi Problem 3, a dog-leg duct through a 60 × 100 × 60 cm shield. A fresh copy of the agent ran both cases, pure absorber and 50% scattering, with only those seven tools. It had no reference fluxes, and it could not run its own code or edit files. Its fluxes were then scored against the benchmark's reference values, which had been withheld.</p>
 </div>
-<div class="metrics"><div class="metric"><div class="metric-val">24 turns, 0 errors</div><div class="metric-sub">Held-out Benchmark B run end to end with shell access off, zero tool errors</div></div><div class="metric"><div class="metric-val">44 / 44</div><div class="metric-sub">OpenSn points scored with visibility passing, 0 silent misses across both cases</div></div><div class="metric"><div class="metric-val">26/26 · 2/2</div><div class="metric-sub">Good and bad tool fixtures passed, and both planted defects caught in review</div></div><div class="metric"><div class="metric-val">0</div><div class="metric-sub">Human interventions while the agent built its own tools</div></div></div>
+<div class="metrics"><div class="metric"><div class="metric-val">0 tool errors</div><div class="metric-sub">Problem 3 ran from STEP file to flux comparison on the first attempt, using only the seven tools</div></div><div class="metric"><div class="metric-val">0 silent misses</div><div class="metric-sub">In 44 OpenSn evaluations, every value that the tools accepted is inside the tolerance band. The tools flagged every value outside it</div></div><div class="metric"><div class="metric-val">26 of 26</div><div class="metric-sub">Tool self-tests passed. 15 of them give a tool a deliberately bad input and require a refusal</div></div><div class="metric"><div class="metric-val">0</div><div class="metric-sub">Human interventions while the agent built its tools, after 26 minutes of practitioner time</div></div></div>
+<p class="muted metrics-note">A silent miss is a value outside the tolerance band that the tools accepted without a flag. The band is ±5% at the five points nearest the source and ±10% elsewhere, and it was fixed on Problem 1 before the test.</p>
 
-<h2>Three things to look at</h2>
-<div class="cards"><a class="card" href="sitting-2-playback.html"><div class="card-tag">Step 1</div><div class="card-title">Sitting 2 Playback</div><p class="card-sum">The agent&#x27;s written reading of the practitioner&#x27;s folder, played back before any mesh or solve. Look at the rows marked Unknown, the four-step workflow diagram, and the check it proposes for each handoff.</p><span class="card-go">Open →</span></a><a class="card" href="results.html"><div class="card-tag">Step 2</div><div class="card-title">Benchmark B Results Chart</div><p class="card-sum">Calculated over expected flux at 21 points along the three duct lines of the held-out problem, for both cases. Hollow markers are points the tools flagged themselves instead of passing them silently.</p><span class="card-go">Open →</span></a><a class="card" href="viewer-3d.html"><div class="card-tag">Step 3</div><div class="card-title">Interactive 3D Field Viewer</div><p class="card-sum">The computed flux field through the dog-leg duct, with slice planes and a tap-to-read 2D view. Switch between OpenSn, OpenMC and their ratio to see where the two methods agree.</p><span class="card-go">Open →</span></a></div>
+<h2>What Trial 0 did not test</h2>
+<div class="prose">
+<p>No practising engineer took part. A second AI agent played the shielding practitioner, and the Kobayashi benchmarks are public, so the agent may have met them in its training data. Open-source codes stood in for a commercial chain. Trial 1 repeats the exercise with a practising shielding engineer and real industrial CAD.</p>
+</div>
 
-<h2>Physics traps caught during setup</h2>
+<h2>The three pages</h2>
+<div class="cards"><a class="card" href="sitting-2-playback.html"><div class="card-tag">Step 1</div><div class="card-title">Setup playback</div><p class="card-sum">Before it meshed anything or ran a solver, the agent wrote down its reading of the Problem 1 folder for the practitioner to correct. This is that page, unaltered. Look at the rows marked Unknown, the four-step workflow diagram, and the check it proposes for each handoff.</p><span class="card-go">Open playback</span></a><a class="card" href="results.html"><div class="card-tag">Step 2</div><div class="card-title">Problem 3 results</div><p class="card-sum">Calculated over expected (C/E) flux at 21 points on the three lines through the dog-leg duct, for both cases. The point (5, 55, 5) lies on two lines, so each case has 22 evaluations and the two cases have 44. Hollow squares are OpenSn values that the tools flagged themselves.</p><span class="card-go">Open chart</span></a><a class="card" href="viewer-3d.html"><div class="card-tag">Step 3</div><div class="card-title">3D flux viewer</div><p class="card-sum">The computed scalar flux through the dog-leg duct, with slice planes and a tap-to-read 2D view. Switch between OpenSn, OpenMC, and their ratio to see where the two methods agree.</p><span class="card-go">Open 3D viewer</span></a></div>
+
+<h2>Physics errors caught during setup</h2>
+<p class="prose">Each of these four errors gives wrong fluxes with no warning from the software. A check caught each one during setup.</p>
 <details>
-<summary>Four real physics traps caught during setup</summary>
-<ol><li><strong>Gmsh relabelled a solid after scaling.</strong> Converting the CAD from millimetres to centimetres left the shield solid named as the source. A volume check against the problem statement caught it before any solve.</li><li><strong>DAGMC treats a material called “void” as vacuum.</strong> The low-density region was transported as empty space with zero material volume. An independent volume check on the faceted geometry caught it, and neutral material tags fixed it.</li><li><strong>OpenMC tallies were normalised twice.</strong> A fixed-source run already scales tallies by source strength, so the first probe read about 1007 times the reference. A 1% gate on the flux at (5, 5, 5) caught it.</li><li><strong>Biased one-group weight windows were disabled, not shipped.</strong> Two MAGIC weight-window trials read 10 to 58% high in the deep shield while quoting 4 to 8% errors, and an 80 million particle analog run matched the exact reference. The agent turned weight windows off and logged the gap.</li></ol>
+<summary>Show the four errors</summary>
+<ol><li><strong>Gmsh relabelled a solid after scaling.</strong> After the CAD was scaled from millimetres to centimetres, the shield solid carried the name of the source. A check of each solid&#x27;s volume against the problem statement caught it.</li><li><strong>DAGMC treats a material named &quot;void&quot; as vacuum.</strong> OpenMC transported the low-density void region as empty space, with zero material volume. An independent volume check on the faceted geometry caught it. Neutral material names fixed it.</li><li><strong>OpenMC tallies were normalised twice.</strong> A fixed-source run already scales tallies by the source strength, so the first test run read about 1007 times the reference. A check that the flux at (5, 5, 5) is within 1% of the reference caught it.</li><li><strong>One-group weight windows gave biased fluxes.</strong> Two trials with MAGIC weight windows read 10% to 58% high in the deep shield while they quoted relative errors of 4% to 8%. An analog run of 80 million particles matched the exact reference. The agent turned weight windows off and recorded validated variance reduction as a gap.</li></ol>
 </details>
 
-<footer class="muted">The Kobayashi problems are OECD/NEA 3D radiation transport benchmarks for simple geometries with void regions. Problem 1 is a shield around a void. Problem 3 is a dog-leg duct. These pages work on phone and desktop, in light or dark mode.</footer>
+<footer class="muted">The Kobayashi problems come from OECD/NEA report NSC/DOC(2000)4, a set of 3D radiation transport benchmarks for simple geometries with void regions. These pages work on a phone or a desktop, in light or dark mode.</footer>
 </main>
 </body>
 </html>

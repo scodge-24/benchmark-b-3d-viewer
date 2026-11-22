@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Benchmark B Results Chart · Trial 0</title>
+<title>Problem 3 results · Trial 0</title>
 <style>
   * { box-sizing: border-box; }
   body {
@@ -94,7 +94,15 @@ body{padding:max(12px, env(safe-area-inset-top)) max(12px, env(safe-area-inset-r
   .site-nav{--sn-bg:#ffffff;--sn-border:#cbd5e1;--sn-ink:#334155;--sn-hover:#f1f5f9;--sn-active-bg:#2563eb}
 }
 
+.page-head{max-width:960px;margin:0 auto 10px}
+.page-head h1{font-size:18px;line-height:1.25;font-weight:650;margin:2px 0 4px;color:var(--foreground)}
+.page-head p{margin:0;max-width:78ch;font-size:13px;line-height:1.5;color:var(--muted-foreground)}
+
 .wrap{max-width:960px;margin:0 auto}
+.wrap .page-head{margin:0}
+h2.panel-title{margin:0}
+.notes ul{margin:8px 0 0;padding-left:18px}
+.notes li{margin:6px 0;line-height:1.5}
 .noscript-banner{max-width:960px;margin:0 auto 12px;padding:12px 14px;border:1px solid #f59e0b;border-radius:8px;
   background:rgba(245,158,11,0.12);font-size:13px;line-height:1.5}
 .chart-hint{display:none;font-size:11px;color:var(--muted-foreground);margin:4px 0 0}
@@ -108,47 +116,66 @@ body{padding:max(12px, env(safe-area-inset-top)) max(12px, env(safe-area-inset-r
 </head>
 <body>
 <noscript><div class="noscript-banner"><b>JavaScript is required.</b> The chart is drawn with JavaScript. Open this page in Safari, Chrome or Firefox with JavaScript on.</div></noscript>
-<nav class="site-nav" aria-label="Trial 0 pages"><div class="site-nav__bar"><a href="index.html">Overview</a><a href="sitting-2-playback.html">1. Sitting 2 Playback</a><a href="results.html" aria-current="page">2. Benchmark B Results</a><a href="viewer-3d.html">3. 3D Field Viewer</a></div></nav><script>(function(){var b=document.querySelector('.site-nav__bar'),a=b&&b.querySelector('[aria-current]');if(a)b.scrollLeft=a.offsetLeft-(b.clientWidth-a.offsetWidth)/2;})();</script>
+<nav class="site-nav" aria-label="Trial 0 pages"><div class="site-nav__bar"><a href="index.html">Overview</a><a href="sitting-2-playback.html">1. Setup playback</a><a href="results.html" aria-current="page">2. Problem 3 results</a><a href="viewer-3d.html">3. 3D flux viewer</a></div></nav><script>(function(){var b=document.querySelector('.site-nav__bar'),a=b&&b.querySelector('[aria-current]');if(a)b.scrollLeft=a.offsetLeft-(b.clientWidth-a.offsetWidth)/2;})();</script>
 <div class="wrap">
+  <header class="page-head"><h1>Problem 3 results</h1><p>A fresh copy of the agent solved Kobayashi Problem 3, a dog-leg duct through a shield, with the seven tools built during setup. It had no reference fluxes. The chart scores its results against the withheld OECD/NEA reference (Table 4).</p></header>
   <div class="kpi-grid">
     <div class="kpi">
-      <div class="kpi-label">Shell-Off Dry Run</div>
-      <div class="kpi-val ok">24 turns · 0 err</div>
-      <div class="kpi-sub">18 MCP calls · 12/12 immutable</div>
+      <div class="kpi-label">Problem 3 run</div>
+      <div class="kpi-val ok">0 tool errors</div>
+      <div class="kpi-sub">First attempt, with no reference fluxes supplied</div>
     </div>
     <div class="kpi">
-      <div class="kpi-label">OpenSn Visibility</div>
-      <div class="kpi-val ok">44 / 44 PASS</div>
-      <div class="kpi-sub">0 silent misses (Case i + ii)</div>
+      <div class="kpi-label">OpenSn silent misses</div>
+      <div class="kpi-val ok">0 of 44</div>
+      <div class="kpi-sub">No value that the tools accepted is outside the tolerance band</div>
     </div>
     <div class="kpi">
-      <div class="kpi-label">Fixtures &amp; Review</div>
-      <div class="kpi-val ok">26/26 · 2/2</div>
-      <div class="kpi-sub">15 bad fixtures · 2 planted caught</div>
+      <div class="kpi-label">Tool self-tests</div>
+      <div class="kpi-val ok">26 of 26</div>
+      <div class="kpi-sub">15 deliberately bad inputs refused. An independent reviewer found 2 of 2 planted errors</div>
     </div>
     <div class="kpi">
-      <div class="kpi-label">Interventions</div>
-      <div class="kpi-val info">0 build</div>
-      <div class="kpi-sub">26m sitting · 165-line desk.md</div>
+      <div class="kpi-label">Human interventions</div>
+      <div class="kpi-val info">0</div>
+      <div class="kpi-sub">During the build, after 26 min of practitioner time</div>
     </div>
   </div>
 
   <div class="panel">
     <div class="panel-head">
-      <div class="panel-title">Held-Out Benchmark B (Kobayashi Problem 3) — C/E Ratio vs Withheld Table 4</div>
-      <div class="panel-sub">Green band = ±5% near / ±10% far · Hollow markers = honestly flagged (PASS visibility)</div>
+      <h2 class="panel-title">C/E flux ratio for Kobayashi Problem 3 against the withheld Table 4 reference</h2>
+      <div class="panel-sub">The green band is the tolerance, ±5% at the five points nearest the source and ±10% elsewhere. Hollow squares are OpenSn values that the tools flagged without the reference. Red rings are OpenMC values more than 3σ from the reference.</div>
     </div>
     <div class="tabs" role="group" aria-label="Case selector">
       <button class="tab" type="button" data-case="ii" aria-pressed="true">Case ii (50% scattering)</button>
       <button class="tab" type="button" data-case="i" aria-pressed="false">Case i (pure absorber)</button>
     </div>
-    <div class="chart-scroll"><div class="chart-box" id="chart"></div></div><div class="chart-hint">Swipe chart sideways to see Lines 3B and 3C.</div>
+    <div class="chart-scroll"><div class="chart-box" id="chart"></div></div><div class="chart-hint">Swipe the chart sideways to see Lines 3B and 3C.</div>
     <div class="legend">
-      <span class="leg-item"><span class="dot" style="background:var(--chart-1,#60a5fa)"></span>OpenMC reported (≤5% rel err)</span>
-      <span class="leg-item"><span class="dot" style="border:2px solid var(--destructive,#f87171);background:transparent"></span>OpenMC strict 3σ miss</span>
-      <span class="leg-item"><span class="sq" style="background:var(--chart-2,#34d399)"></span>OpenSn accepted (all in band)</span>
-      <span class="leg-item"><span class="sq" style="border:1.8px solid var(--warning,#fbbf24);background:transparent"></span>OpenSn flagged (ray/mesh, PASS)</span>
+      <span class="leg-item"><span class="dot" style="background:var(--chart-1,#60a5fa)"></span>OpenMC reported (1σ relative error ≤ 5%)</span>
+      <span class="leg-item"><span class="dot" style="border:2px solid var(--destructive,#f87171);background:transparent"></span>OpenMC more than 3σ from the reference</span>
+      <span class="leg-item"><span class="sq" style="background:var(--chart-2,#34d399)"></span>OpenSn accepted by the tools (all in band)</span>
+      <span class="leg-item"><span class="sq" style="border:1.8px solid var(--warning,#fbbf24);background:transparent"></span>OpenSn flagged by the tools (ray effects or mesh convergence)</span>
     </div>
+  </div>
+  <div class="panel notes">
+    <h2 class="panel-title">What to notice</h2>
+    <ul>
+      <li>OpenSn had no silent misses in 44 evaluations. Every filled green square is inside the tolerance band. The two values outside the band in each case were flagged by the tools with no reference supplied, (5, 45, 5) as spatially unconverged and (5, 55, 5) as contaminated by ray effects.</li>
+      <li>In Case ii (50% scattering), five deep points on Line 3C are within 0.3% to 1.6% of the withheld GMVP Monte Carlo values in OECD/NEA Table 4.</li>
+      <li>The three OpenMC red rings are explained. (5, 5, 5) in Case ii shows a known -0.33% bias from averaging the tally over a 2 cm cube inside the source. (25, 55, 5) reads high in both cases because both runs used random seed 1. An independent run with seed 42 gave C/E = 1.016, and the comparison tool had already flagged the Case i value as a disagreement between OpenSn and OpenMC.</li>
+    </ul>
+  </div>
+  <div class="panel notes">
+    <h2 class="panel-title">How to read the chart</h2>
+    <ul>
+      <li>C/E is the calculated flux divided by the reference flux.</li>
+      <li>A silent miss is a value outside the tolerance band that the tools accepted without a flag.</li>
+      <li>Each axis label is the coordinate in cm that changes along the line. That coordinate is y on Line 3A at (5, y, 5), x on Line 3B at (x, 55, 5), and x on Line 3C at (x, 95, 35).</li>
+      <li>The point (5, 55, 5) lies on both Line 3A and Line 3B. The chart plots it once, under 3A, so each case shows 21 points. The scoring counts it on both lines, so each case has 22 evaluations and the two cases have 44.</li>
+      <li>OpenMC values with a 1σ relative error above 5% were flagged by the tools and are not plotted.</li>
+    </ul>
   </div>
 </div>
 

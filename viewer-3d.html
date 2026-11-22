@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>Interactive 3D Field Viewer · Trial 0</title>
+<title>3D flux viewer · Trial 0</title>
 <style>
   * { box-sizing: border-box; }
   html, body {
@@ -414,12 +414,17 @@
   .site-nav{--sn-bg:#ffffff;--sn-border:#cbd5e1;--sn-ink:#334155;--sn-hover:#f1f5f9;--sn-active-bg:#2563eb}
 }
 
+.page-head{max-width:960px;margin:0 auto 10px}
+.page-head h1{font-size:18px;line-height:1.25;font-weight:650;margin:2px 0 4px;color:var(--foreground)}
+.page-head p{margin:0;max-width:78ch;font-size:13px;line-height:1.5;color:var(--muted-foreground)}
+
 .site-nav{--sn-bottom:10px}
 </style>
 </head>
 <body>
-<noscript><div class="noscript-banner"><b>JavaScript is required.</b> This viewer draws the 3D field and the 2D slices with JavaScript, so nothing below works without it. iOS Quick Look (the preview that opens when you tap an .html attachment in Mail, Messages or Files) turns JavaScript off. Open the file in Safari or Chrome, or host it at a URL and open the link.</div></noscript>
-<nav class="site-nav" aria-label="Trial 0 pages"><div class="site-nav__bar"><a href="index.html">Overview</a><a href="sitting-2-playback.html">1. Sitting 2 Playback</a><a href="results.html">2. Benchmark B Results</a><a href="viewer-3d.html" aria-current="page">3. 3D Field Viewer</a></div></nav><script>(function(){var b=document.querySelector('.site-nav__bar'),a=b&&b.querySelector('[aria-current]');if(a)b.scrollLeft=a.offsetLeft-(b.clientWidth-a.offsetWidth)/2;})();</script>
+<noscript><div class="noscript-banner"><b>JavaScript is required.</b> This viewer draws the 3D field and the 2D slices with JavaScript, so nothing below works without it. iOS Quick Look turns JavaScript off. Quick Look is the preview that opens when you tap an .html attachment in Mail, Messages, or Files. Open the file in Safari or Chrome, or open it from a web link.</div></noscript>
+<nav class="site-nav" aria-label="Trial 0 pages"><div class="site-nav__bar"><a href="index.html">Overview</a><a href="sitting-2-playback.html">1. Setup playback</a><a href="results.html">2. Problem 3 results</a><a href="viewer-3d.html" aria-current="page">3. 3D flux viewer</a></div></nav><script>(function(){var b=document.querySelector('.site-nav__bar'),a=b&&b.querySelector('[aria-current]');if(a)b.scrollLeft=a.offsetLeft-(b.clientWidth-a.offsetWidth)/2;})();</script>
+<header class="page-head"><h1>3D flux viewer</h1><p>Scalar flux in Kobayashi Problem 3 on a 2 cm grid, from OpenSn (S_N) and from OpenMC (Monte Carlo). Case i is a pure absorber and Case ii scatters 50%. 4×4 and 8×8 are the S_N quadrature orders, 4 or 8 polar angles by 4 or 8 azimuthal angles per octant.</p></header>
 <div class="root">
   <div class="toolbar">
     <div class="btn-row" id="fieldBtns">
@@ -428,14 +433,14 @@
       <button class="pill" data-field="sn_ii_4" aria-pressed="false">OpenSn Case ii (4×4)</button>
       <button class="pill" data-field="sn_ii_8" aria-pressed="true">OpenSn Case ii (8×8)</button>
       <button class="pill" data-field="mc_ii" aria-pressed="false">OpenMC Case ii (20M)</button>
-      <button class="pill" data-field="ratio" aria-pressed="false">S_N / MC Ratio</button>
+      <button class="pill" data-field="ratio" aria-pressed="false">OpenSn ÷ OpenMC</button>
     </div>
     <div class="btn-row" id="presetBtns">
-      <span class="row-lbl">Preset</span>
-      <button class="pill subtle" data-preset="iso" aria-pressed="true">Open Cutaway (3A/3B/3C)</button>
-      <button class="pill subtle" data-preset="bend12" aria-pressed="false">Bend 1 &amp; 2 (z=5 cm)</button>
-      <button class="pill subtle" data-preset="vert" aria-pressed="false">Vertical Jog (x=35 cm)</button>
-      <button class="pill subtle" data-preset="exit" aria-pressed="false">Duct Exit (z=35 cm)</button>
+      <span class="row-lbl">View</span>
+      <button class="pill subtle" data-preset="iso" aria-pressed="true">Cutaway (Lines 3A, 3B, 3C)</button>
+      <button class="pill subtle" data-preset="bend12" aria-pressed="false">Bends 1 and 2 (z = 5 cm)</button>
+      <button class="pill subtle" data-preset="vert" aria-pressed="false">Vertical leg (x = 35 cm)</button>
+      <button class="pill subtle" data-preset="exit" aria-pressed="false">Duct exit (z = 35 cm)</button>
     </div>
   </div>
 
@@ -445,10 +450,10 @@
       <canvas id="hudCanvas"></canvas>
       <div class="hud-tl">
         <div class="hud-title" id="hudTitle">OpenSn · Case ii (50% scattering, 8×8)</div>
-        <div class="hud-sub" id="hudSub">512 discrete directions · 14,118 tets · 2 cm sampled voxel grid</div>
+        <div class="hud-sub" id="hudSub">512 directions · 14,118 tetrahedra · sampled on a 2 cm grid</div>
       </div>
-      <button class="reset-btn" id="btnResetView" type="button" title="Reset the camera to the current preset view">Reset</button>
-      <div class="hud-br"><span class="hint-desktop">Drag to orbit · Scroll to zoom · Double-click reset</span><span class="hint-touch">Drag · Pinch</span></div>
+      <button class="reset-btn" id="btnResetView" type="button" title="Reset the camera to the selected view">Reset</button>
+      <div class="hud-br"><span class="hint-desktop">Drag to rotate · Scroll to zoom · Double-click to reset</span><span class="hint-touch">Drag to rotate · Pinch to zoom</span></div>
       <div class="webgl-fallback" id="webglFallback" role="alert" hidden>
         <div class="fb-title">3D view unavailable</div>
         <div class="fb-msg" id="webglFallbackMsg"></div>
@@ -461,10 +466,10 @@
         <div class="cbar-ticks" id="cbarTicks"><span>10⁻⁶</span><span>10⁻⁴</span><span>10⁻²</span><span>10⁰</span><span>10¹</span></div>
       </div>
       <div class="hud-tr">
-        <label class="chk"><input type="checkbox" id="chkDuct" checked> Duct CAD wireframe</label>
+        <label class="chk"><input type="checkbox" id="chkDuct" checked> Duct wireframe</label>
         <label class="chk"><input type="checkbox" id="chkCloud" checked> 3D flux cloud</label>
         <label class="chk"><input type="checkbox" id="chkDet" checked> 21 benchmark points</label>
-        <label class="chk"><input type="checkbox" id="chkMask" checked> Mask MC &gt;10% err</label>
+        <label class="chk"><input type="checkbox" id="chkMask" checked> Mask MC error &gt; 10%</label>
       </div>
     </div>
   </div>
@@ -472,7 +477,7 @@
   <div class="lower-grid">
     <div class="box">
       <div class="box-title">
-        <span>3D Slice Planes</span>
+        <span>3D slice planes</span>
         <span style="font-weight:500;font-size:10px;">2 cm step</span>
       </div>
       <div class="slice-ctrl">
@@ -498,37 +503,37 @@
           <input type="range" id="slZ" min="0" max="29" value="2">
         </div>
         <div style="font-size:11px;color:var(--muted-foreground,#9ca3af);border-top:1px solid var(--border,rgba(128,128,128,0.2));padding-top:8px;">
-          <b>Domain:</b> 60 × 100 × 60 cm (1/8 octant)<br>
-          <b>Reflective:</b> x=0, y=0, z=0<br>
-          <b>Vacuum:</b> x=60, y=100, z=60
+          <b>Domain:</b> 60 × 100 × 60 cm (one octant)<br>
+          <b>Reflective:</b> x = 0, y = 0, z = 0<br>
+          <b>Vacuum:</b> x = 60, y = 100, z = 60
         </div>
       </div>
     </div>
 
     <div class="box slice2d-wrap">
       <div class="box-title">
-        <span id="slice2dTitle">2D Slice — XY @ Z = 5 cm</span>
-        <span style="font-weight:500;font-size:10px;white-space:nowrap;">Tap or drag to inspect</span>
+        <span id="slice2dTitle">2D slice · XY at Z = 5 cm</span>
+        <span style="font-weight:500;font-size:10px;white-space:nowrap;">Tap or drag to read values</span>
       </div>
       <div class="slice2d-stage">
         <canvas id="sliceCanvas"></canvas>
       </div>
       <div class="readout">
-        <div class="ro-cell"><span class="ro-k">Coord (cm)</span><span class="ro-v" id="roCoord">(5, 5, 5)</span></div>
+        <div class="ro-cell"><span class="ro-k">Position (cm)</span><span class="ro-v" id="roCoord">(5, 5, 5)</span></div>
         <div class="ro-cell"><span class="ro-k">Region</span><span class="ro-v" id="roRegion">source</span></div>
-        <div class="ro-cell"><span class="ro-k">Scalar Flux φ</span><span class="ro-v" id="roFlux">—</span></div>
-        <div class="ro-cell"><span class="ro-k">MC 1σ Err / S_N÷MC</span><span class="ro-v" id="roExtra">—</span></div>
+        <div class="ro-cell"><span class="ro-k">Scalar flux φ</span><span class="ro-v" id="roFlux">n/a</span></div>
+        <div class="ro-cell"><span class="ro-k">MC 1σ · S_N ÷ MC</span><span class="ro-v" id="roExtra">n/a</span></div>
       </div>
     </div>
   </div>
 
   <div class="legend-bar">
-    <span class="leg"><span class="swatch sq" style="background:#f97316;"></span>Source [0,10]³</span>
+    <span class="leg"><span class="swatch sq" style="background:#f97316;"></span>Source, [0, 10]³ cm</span>
     <span class="leg"><span class="swatch sq" style="background:#38bdf8;"></span>Dog-leg void duct</span>
     <span class="leg"><span class="swatch" style="background:#22c55e;"></span>S_N accepted</span>
-    <span class="leg"><span class="swatch" style="background:#f59e0b;"></span>Ray-effect flagged</span>
-    <span class="leg"><span class="swatch" style="background:#a78bfa;"></span>Spatially unconverged</span>
-    <span class="leg"><span class="swatch sq" style="background:#334155;border:1px solid #64748b;"></span>MC &gt;10% rel. err (masked)</span>
+    <span class="leg"><span class="swatch" style="background:#f59e0b;"></span>S_N flagged for ray effects</span>
+    <span class="leg"><span class="swatch" style="background:#a78bfa;"></span>S_N spatially unconverged</span>
+    <span class="leg"><span class="swatch sq" style="background:#334155;border:1px solid #64748b;"></span>MC 1σ error &gt; 10% (masked)</span>
   </div>
 </div>
 
@@ -651,28 +656,28 @@ function sampleColor(field, ix, iy, iz, maskErr, outRGBA, off) {
 
 const FIELD_INFO = {
   sn_i_8: {
-    title: "OpenSn · Case i (Pure Absorber, 8×8)",
-    sub: `512 discrete directions · c=0.0 · 14,118 tets (${DATA.meta.sn.sn_case_i_8x8.wall_seconds}s) — note S_N ray-effect streaks`,
+    title: "OpenSn · Case i (pure absorber, 8×8)",
+    sub: `S_N ray effects show as streaks · 512 directions · c = 0 · 14,118 tetrahedra · ${DATA.meta.sn.sn_case_i_8x8.wall_seconds} s solve`,
     caseKey: "i",
   },
   sn_ii_4: {
-    title: "OpenSn · Case ii (50% Scattering, 4×4 coarse)",
-    sub: `128 discrete directions · c=0.5 · 14,118 tets (${DATA.meta.sn.sn_case_ii_4x4.wall_seconds}s) — coarse quadrature rays visible`,
+    title: "OpenSn · Case ii (50% scattering, 4×4)",
+    sub: `Coarse quadrature, ray effects visible · 128 directions · c = 0.5 · 14,118 tetrahedra · ${DATA.meta.sn.sn_case_ii_4x4.wall_seconds} s solve`,
     caseKey: "ii",
   },
   sn_ii_8: {
-    title: "OpenSn · Case ii (50% Scattering, 8×8)",
-    sub: `512 discrete directions · c=0.5 · 14,118 tets (${DATA.meta.sn.sn_case_ii_8x8.wall_seconds}s) — scattering fills dog-leg bends`,
+    title: "OpenSn · Case ii (50% scattering, 8×8)",
+    sub: `Scattering fills the duct bends · 512 directions · c = 0.5 · 14,118 tetrahedra · ${DATA.meta.sn.sn_case_ii_8x8.wall_seconds} s solve`,
     caseKey: "ii",
   },
   mc_ii: {
     title: "OpenMC · Case ii (Monte Carlo, 20M particles)",
-    sub: `20M histories · DAGMC CAD · 2 cm voxels (${DATA.meta.mc.wall_seconds}s) — ${DATA.meta.mc.pct_voxels_under_10pct.toFixed(1)}% voxels ≤10% err`,
+    sub: `${DATA.meta.mc.pct_voxels_under_10pct.toFixed(1)}% of voxels have 1σ error ≤ 10% · DAGMC geometry · 2 cm voxels · ${DATA.meta.mc.wall_seconds} s run`,
     caseKey: "ii",
   },
   ratio: {
-    title: "OpenSn (8×8) ÷ OpenMC Ratio · Case ii",
-    sub: "Blue (<1×) · White (1.0× agreement) · Red (>1×) · Masked where MC 1σ err >10%",
+    title: "OpenSn (8×8) ÷ OpenMC ratio · Case ii",
+    sub: "Blue below 1 · White at 1 (agreement) · Red above 1 · Masked where MC 1σ error > 10%",
     caseKey: "ii",
   },
 };
@@ -776,10 +781,10 @@ function showWebglFallback(msg) {
   stageWrap.classList.add("no-webgl");
 }
 if (!gl) {
-  showWebglFallback("This browser could not start WebGL, so the 3D view cannot be drawn. The 2D slice inspector below still works.");
+  showWebglFallback("This browser could not start WebGL, so the 3D view cannot be drawn. The 2D slice below still works.");
 }
 glCanvas.addEventListener("webglcontextlost", () => {
-  showWebglFallback("The 3D view lost its graphics context (the device reclaimed GPU memory). Reload the page to restore it. The 2D slice inspector below still works.");
+  showWebglFallback("The device reclaimed graphics memory, so the 3D view stopped. Reload the page to restore it. The 2D slice below still works.");
 });
 
 let progFlat, progTex, progPt;
@@ -1068,7 +1073,7 @@ function render3D() {
       gl.depthMask(true);
     }
 
-    // 5. 21 Benchmark B detector markers (drawn on top with clean white core halo)
+    // 5. 21 benchmark point markers (drawn on top with clean white core halo)
     if (state.showDet) {
       const pts = DATA.points[FIELD_INFO[state.field].caseKey];
       const dv = [];
@@ -1108,7 +1113,7 @@ function render3D() {
     { w: toW(0, 105, 0), text: "Y (100 cm)", col: "#4ade80" },
     { w: toW(0, 0, 64), text: "Z (60 cm)", col: "#60a5fa" },
     { w: toW(5, 5, 13), text: "Source", col: "#fdba74" },
-    { w: toW(35, 97, 43), text: "Duct Exit (35,95,35)", col: "#fde047" },
+    { w: toW(35, 97, 43), text: "Duct exit (35, 95, 35)", col: "#fde047" },
   ];
   // Keep label boxes inside the canvas, and below the header bar on compact layouts.
   const pad = 6 * dpr;
@@ -1151,13 +1156,13 @@ function render2D() {
   let nu, nv, bu, bv, uLbl, vLbl, title;
   if (ax === "z") {
     nu = NY; nv = NX; bu = BY; bv = BX; uLbl = "Y (cm)"; vLbl = "X (cm)";
-    title = `2D Slice — XY @ Z = ${state.iz * 2 + 1} cm`;
+    title = `2D slice · XY at Z = ${state.iz * 2 + 1} cm`;
   } else if (ax === "x") {
     nu = NY; nv = NZ; bu = BY; bv = BZ; uLbl = "Y (cm)"; vLbl = "Z (cm)";
-    title = `2D Slice — YZ @ X = ${state.ix * 2 + 1} cm`;
+    title = `2D slice · YZ at X = ${state.ix * 2 + 1} cm`;
   } else {
     nu = NX; nv = NZ; bu = BX; bv = BZ; uLbl = "X (cm)"; vLbl = "Z (cm)";
-    title = `2D Slice — XZ @ Y = ${state.iy * 2 + 1} cm`;
+    title = `2D slice · XZ at Y = ${state.iy * 2 + 1} cm`;
   }
   document.getElementById("slice2dTitle").textContent = title;
 
@@ -1298,15 +1303,17 @@ function updateReadout(ix, iy, iz) {
   if (state.field === "ratio") {
     const snL = VOLS.sn_ii_8[id], mcL = VOLS.mc_ii[id];
     const r = (!isNaN(snL) && !isNaN(mcL)) ? Math.pow(10, snL - mcL) : NaN;
-    document.getElementById("roFlux").textContent = isNaN(snL) ? "—" : Math.pow(10, snL).toExponential(2);
+    document.getElementById("roFlux").textContent = isNaN(snL) ? "≤ 0" : Math.pow(10, snL).toExponential(2);
     document.getElementById("roExtra").textContent = (isNaN(r) || err > 0.10)
       ? `masked (${isFinite(err) ? (err*100).toFixed(0)+"%" : "0 hits"})`
       : `${r.toFixed(2)}× (MC ${(err*100).toFixed(1)}%)`;
   } else {
     const masked = state.field === "mc_ii" && state.maskErr && err > 0.10;
-    document.getElementById("roFlux").textContent = (isNaN(lv) || masked) ? "no number" : Math.pow(10, lv).toExponential(2);
+    // An encoded 0 is flux <= 0: no tally hits in OpenMC, a non-positive S_N flux in OpenSn.
+    const noValue = state.field === "mc_ii" ? "0 hits" : "≤ 0";
+    document.getElementById("roFlux").textContent = isNaN(lv) ? noValue : (masked ? "masked" : Math.pow(10, lv).toExponential(2));
     const snL = VOLS.sn_ii_8[id], mcL = VOLS.mc_ii[id];
-    const ratioStr = (!isNaN(snL) && !isNaN(mcL) && err <= 0.10) ? `${Math.pow(10, snL - mcL).toFixed(2)}×` : "—";
+    const ratioStr = (!isNaN(snL) && !isNaN(mcL) && err <= 0.10) ? `${Math.pow(10, snL - mcL).toFixed(2)}×` : "n/a";
     const errStr = isFinite(err) ? `${(err * 100).toFixed(1)}%` : "0 hits";
     document.getElementById("roExtra").textContent = `${errStr} · ${ratioStr}`;
   }

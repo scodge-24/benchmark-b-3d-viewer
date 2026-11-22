@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Sitting 2 Playback · Trial 0</title>
+<title>Setup playback · Trial 0</title>
 <style>
 :root{
   --bg:#f7f6f2; --panel:#ffffff; --ink:#1d2228; --muted:#5b6470; --line:#d6d3cb; --accent:#1f5fa8;
@@ -111,12 +111,17 @@ li{margin:3px 0}
 
 body{padding:0 env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)}
 .site-nav{--sn-gutter:16px;--sn-max:828px;--sn-top:max(16px, env(safe-area-inset-top));--sn-bottom:0px}
+.ctx-note{margin:0 0 22px;padding:9px 12px 10px;border:1px dashed var(--accent);border-radius:8px;background:var(--panel);
+  color:var(--ink);font-size:.85rem;line-height:1.4}
+.ctx-tag{display:block;margin-bottom:3px;font-size:.72rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--accent)}
+.ctx-terms{display:block;margin-top:4px;font-size:.8rem;color:var(--muted)}
 @media (max-width:600px){.bar button{min-height:36px}.scroll table{min-width:520px}}
 </style>
 </head>
 <body>
-<nav class="site-nav" aria-label="Trial 0 pages"><div class="site-nav__bar"><a href="index.html">Overview</a><a href="sitting-2-playback.html" aria-current="page">1. Sitting 2 Playback</a><a href="results.html">2. Benchmark B Results</a><a href="viewer-3d.html">3. 3D Field Viewer</a></div></nav><script>(function(){var b=document.querySelector('.site-nav__bar'),a=b&&b.querySelector('[aria-current]');if(a)b.scrollLeft=a.offsetLeft-(b.clientWidth-a.offsetWidth)/2;})();</script>
+<nav class="site-nav" aria-label="Trial 0 pages"><div class="site-nav__bar"><a href="index.html">Overview</a><a href="sitting-2-playback.html" aria-current="page">1. Setup playback</a><a href="results.html">2. Problem 3 results</a><a href="viewer-3d.html">3. 3D flux viewer</a></div></nav><script>(function(){var b=document.querySelector('.site-nav__bar'),a=b&&b.querySelector('[aria-current]');if(a)b.scrollLeft=a.offsetLeft-(b.clientWidth-a.offsetWidth)/2;})();</script>
 <main>
+<aside class="ctx-note" role="note"><span class="ctx-tag">About this page</span>This is the unaltered setup playback that the AI agent wrote after it read the Kobayashi Problem 1 folder, before any mesh or solver run. It shows how the agent marked unknowns and asked the practitioner for decisions. <span class="ctx-terms">"Sitting 2" is the second of two sessions with the practitioner. "Pocket" is the agent's tool set.</span></aside>
 
 <h1>Kobayashi Problem 1: my reading, for you to correct</h1>
 <p class="muted">Sitting 2 playback · Trial 0 · 21 November 2026</p>
