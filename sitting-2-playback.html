@@ -1,0 +1,306 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Sitting 2 Playback · Trial 0</title>
+<style>
+:root{
+  --bg:#f7f6f2; --panel:#ffffff; --ink:#1d2228; --muted:#5b6470; --line:#d6d3cb; --accent:#1f5fa8;
+  --auto-bg:#dcebfb; --auto-bd:#1f5fa8;
+  --manual-bg:#fdecc8; --manual-bd:#a86a00;
+  --data-bg:#d9f1e3; --data-bd:#1c7a4b;
+  --probe-bg:#f3ddf0; --probe-bd:#8a2f82;
+  --unknown-bg:#f3ddf0; --unknown-ink:#6d2267;
+  --ok-ink:#1c7a4b; --gap-ink:#a13a1b;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#14171b; --panel:#1d2126; --ink:#e8eaed; --muted:#a2aab4; --line:#353b43; --accent:#7db4f0;
+    --auto-bg:#17324f; --auto-bd:#7db4f0;
+    --manual-bg:#4a3608; --manual-bd:#f0b95a;
+    --data-bg:#123a26; --data-bd:#6fd09c;
+    --probe-bg:#44213f; --probe-bd:#e29bda;
+    --unknown-bg:#44213f; --unknown-ink:#f0bfe9;
+    --ok-ink:#6fd09c; --gap-ink:#f29a7c;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#14171b; --panel:#1d2126; --ink:#e8eaed; --muted:#a2aab4; --line:#353b43; --accent:#7db4f0;
+  --auto-bg:#17324f; --auto-bd:#7db4f0;
+  --manual-bg:#4a3608; --manual-bd:#f0b95a;
+  --data-bg:#123a26; --data-bd:#6fd09c;
+  --probe-bg:#44213f; --probe-bd:#e29bda;
+  --unknown-bg:#44213f; --unknown-ink:#f0bfe9;
+  --ok-ink:#6fd09c; --gap-ink:#f29a7c;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+main{max-width:860px;margin:0 auto;padding:24px 16px 56px}
+h1{font-size:1.5rem;margin:0 0 4px}
+h2{font-size:1.15rem;margin:36px 0 8px;padding-top:16px;border-top:1px solid var(--line)}
+p{margin:8px 0}
+.lede{font-size:1.05rem;background:var(--panel);border:1px solid var(--line);border-left:4px solid var(--probe-bd);padding:12px 14px;border-radius:6px}
+.muted{color:var(--muted)}
+.ev{font:12.5px/1.45 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;color:var(--muted);overflow-wrap:anywhere}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:14px}
+.scroll{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:.93rem}
+th,td{text-align:left;vertical-align:top;padding:7px 8px;border-bottom:1px solid var(--line)}
+th{font-weight:600;color:var(--muted);font-size:.82rem;text-transform:uppercase;letter-spacing:.03em}
+.unk{display:inline-block;background:var(--unknown-bg);color:var(--unknown-ink);font-weight:700;border-radius:4px;padding:0 6px;font-size:.85rem}
+.ok{color:var(--ok-ink);font-weight:600}
+.gap{color:var(--gap-ink);font-weight:600}
+button{font:inherit;color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:6px 14px;cursor:pointer}
+button:hover{border-color:var(--accent)}
+button[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--bg);font-weight:600}
+button:disabled{opacity:.45;cursor:default}
+.bar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:10px 0}
+.bar .count{margin-left:auto;color:var(--muted);font-size:.9rem}
+svg{display:block;width:100%;min-width:620px;height:auto}
+.box rect{stroke-width:2}
+.box text{fill:var(--ink);font-size:14px;text-anchor:middle}
+.auto rect{fill:var(--auto-bg);stroke:var(--auto-bd)}
+.manual rect{fill:var(--manual-bg);stroke:var(--manual-bd);stroke-dasharray:7 4}
+.data rect{fill:var(--data-bg);stroke:var(--data-bd)}
+.probe rect{fill:var(--probe-bg);stroke:var(--probe-bd);stroke-dasharray:2 4}
+.edge{stroke:var(--muted);stroke-width:1.8;fill:none}
+.elabel{fill:var(--muted);font-size:12px;text-anchor:middle}
+.arrowhead{fill:var(--muted)}
+[data-step]{display:none}
+#flow[data-current="1"] [data-step="1"],
+#flow[data-current="2"] [data-step="1"],#flow[data-current="2"] [data-step="2"],
+#flow[data-current="3"] [data-step="1"],#flow[data-current="3"] [data-step="2"],#flow[data-current="3"] [data-step="3"],
+#flow[data-current="4"] [data-step]{display:inline}
+.cap{display:none}
+#flow[data-current="1"] .cap[data-cap="1"],#flow[data-current="2"] .cap[data-cap="2"],
+#flow[data-current="3"] .cap[data-cap="3"],#flow[data-current="4"] .cap[data-cap="4"]{display:block}
+.legend{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:.88rem;margin-top:10px}
+.sw{display:inline-block;width:22px;height:13px;border:2px solid;border-radius:3px;vertical-align:-2px;margin-right:5px}
+.sw.a{background:var(--auto-bg);border-color:var(--auto-bd)}
+.sw.m{background:var(--manual-bg);border-color:var(--manual-bd);border-style:dashed}
+.sw.d{background:var(--data-bg);border-color:var(--data-bd)}
+.sw.p{background:var(--probe-bg);border-color:var(--probe-bd);border-style:dotted}
+.variant{display:none}
+.variant.on{display:block}
+dl{display:grid;grid-template-columns:max-content 1fr;gap:6px 14px;margin:10px 0 0}
+dt{font-weight:600;color:var(--muted)}
+dd{margin:0}
+ul{margin:8px 0;padding-left:20px}
+li{margin:3px 0}
+.q{border-left:4px solid var(--accent);padding:10px 14px;background:var(--panel);border-radius:6px;margin:10px 0}
+@media (max-width:520px){dl{grid-template-columns:1fr}dt{margin-top:6px}}
+</style>
+<link rel="icon" href="data:,">
+<style>
+.site-nav{--sn-bg:#111827;--sn-border:#334155;--sn-ink:#cbd5e1;--sn-hover:#1e293b;--sn-active-bg:#3b82f6;--sn-active-ink:#ffffff;
+  display:block;box-sizing:border-box;width:calc(100% - 2 * var(--sn-gutter, 0px));max-width:var(--sn-max, 960px);
+  margin:var(--sn-top, 0px) auto var(--sn-bottom, 12px);font:500 13px/1.2 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+.site-nav *{box-sizing:border-box}
+.site-nav__bar{position:relative;display:flex;flex-wrap:nowrap;gap:4px;overflow-x:auto;-webkit-overflow-scrolling:touch;
+  scrollbar-width:none;padding:4px;background:var(--sn-bg);border:1px solid var(--sn-border);border-radius:10px}
+.site-nav__bar::-webkit-scrollbar{display:none}
+.site-nav a{flex:0 0 auto;display:inline-flex;align-items:center;min-height:36px;padding:0 12px;border-radius:7px;
+  color:var(--sn-ink);text-decoration:none;white-space:nowrap}
+.site-nav a:hover{background:var(--sn-hover)}
+.site-nav a:focus-visible{outline:2px solid var(--sn-active-bg);outline-offset:1px}
+.site-nav a[aria-current="page"]{background:var(--sn-active-bg);color:var(--sn-active-ink);font-weight:600}
+@media (prefers-color-scheme: light){
+  .site-nav{--sn-bg:#ffffff;--sn-border:#cbd5e1;--sn-ink:#334155;--sn-hover:#f1f5f9;--sn-active-bg:#2563eb}
+}
+
+body{padding:0 env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)}
+.site-nav{--sn-gutter:16px;--sn-max:828px;--sn-top:max(16px, env(safe-area-inset-top));--sn-bottom:0px}
+@media (max-width:600px){.bar button{min-height:36px}.scroll table{min-width:520px}}
+</style>
+</head>
+<body>
+<nav class="site-nav" aria-label="Trial 0 pages"><div class="site-nav__bar"><a href="index.html">Overview</a><a href="sitting-2-playback.html" aria-current="page">1. Sitting 2 Playback</a><a href="results.html">2. Benchmark B Results</a><a href="viewer-3d.html">3. 3D Field Viewer</a></div></nav><script>(function(){var b=document.querySelector('.site-nav__bar'),a=b&&b.querySelector('[aria-current]');if(a)b.scrollLeft=a.offsetLeft-(b.clientWidth-a.offsetWidth)/2;})();</script>
+<main>
+
+<h1>Kobayashi Problem 1: my reading, for you to correct</h1>
+<p class="muted">Sitting 2 playback · Trial 0 · 21 November 2026</p>
+
+<p class="lede">This is my reading of your folder and your reply, and it waits on you to correct it: I do not yet know what you count as agreement with the reference, how you judge ray effects, or which case you want working first.</p>
+
+<p>No mesh has been made and no transport calculation has been run. Everything below comes from reading your files, public documentation, and read-only checks of what is installed.</p>
+
+<h2>1. What I took from your folder and reply</h2>
+<div class="panel scroll">
+<table>
+<thead><tr><th>Claim</th><th>Where it comes from</th><th>Status</th></tr></thead>
+<tbody>
+<tr><td>One-eighth octant, 100 cm cube, three regions: source, void, shield</td><td class="ev">benchmark-a/README.md §1</td><td>Read</td></tr>
+<tr><td>The void is a material with Σt = 1e-4 cm⁻¹, not vacuum</td><td class="ev">cross_sections.json (void.sigma_t); your reply</td><td>Read</td></tr>
+<tr><td>Case i is a pure absorber; case ii scatters 50% in every region</td><td class="ev">cross_sections.json (cases)</td><td>Read</td></tr>
+<tr><td>Trusted outputs: 30 points on lines 1A, 1B, 1C (28 distinct). Case i is exact. Case ii is GMVP Monte Carlo with one-sigma up to 0.89%</td><td class="ev">reference_flux_p1.json</td><td>Read</td></tr>
+<tr><td>The STEP file declares millimetres and holds three named solids</td><td class="ev">kobayashi_p1.step line 41; prep/surface-probe/gmsh_step_probe.out.json</td><td>Checked</td></tr>
+<tr><td>Volumes in the STEP file are 1000, 124 000 and 875 000 cm³ once converted</td><td class="ev">same probe; README.md §1</td><td>Checked</td></tr>
+<tr><td>FreeCAD, Gmsh, OpenSn, OpenMC and cad_to_dagmc stand in for SpaceClaim, Attila's mesher, Attila and MCNP</td><td class="ev">your reply (software table)</td><td>Read</td></tr>
+<tr><td>What difference from the reference you accept at a point</td><td class="ev">not in folder or reply</td><td><span class="unk">Unknown</span></td></tr>
+<tr><td>How you decide an S_N result is ray-effect contaminated</td><td class="ev">not in folder or reply</td><td><span class="unk">Unknown</span></td></tr>
+<tr><td>Whether a scored point means the value at the point or an average over a small volume around it</td><td class="ev">not in folder or reply</td><td><span class="unk">Unknown</span></td></tr>
+<tr><td>Which case, and which solver, you want working first</td><td class="ev">not in folder or reply</td><td><span class="unk">Unknown</span></td></tr>
+<tr><td>Mesh size, angular set and run-time budget you would normally use</td><td class="ev">not in folder or reply</td><td><span class="unk">Unknown</span></td></tr>
+<tr><td>What the CAD engineer records today when handing over a STEP file</td><td class="ev">not in folder or reply</td><td><span class="unk">Unknown</span></td></tr>
+</tbody>
+</table>
+</div>
+
+<h2>2. The workflow, built up one step at a time</h2>
+<div class="panel" id="flow" data-current="1">
+  <div class="bar">
+    <button id="back" type="button">Back</button>
+    <button id="next" type="button">Next step</button>
+    <span class="count" id="count">Step 1 of 4</span>
+  </div>
+  <div class="scroll">
+  <svg viewBox="0 0 780 396" role="img" aria-label="Workflow diagram, built up over four steps">
+    <defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="arrowhead" d="M0 0L10 5L0 10z"/></marker></defs>
+
+    <g data-step="1" class="box manual"><rect x="20" y="24" width="200" height="66" rx="8"/><text x="120" y="52">CAD engineer exports</text><text x="120" y="71">STEP in mm</text></g>
+    <g data-step="1"><path class="edge" marker-end="url(#ah)" d="M220 57H288"/><text class="elabel" x="255" y="108">receipt +</text><text class="elabel" x="255" y="123">unit check</text></g>
+    <g data-step="1" class="box auto"><rect x="290" y="24" width="200" height="66" rx="8"/><text x="390" y="52">Tet mesh in cm, regions</text><text x="390" y="71">and boundaries tagged</text></g>
+
+    <g data-step="2" class="box data"><rect x="290" y="166" width="200" height="66" rx="8"/><text x="390" y="194">Table 1 cross-sections,</text><text x="390" y="213">Table 2 reference fluxes</text></g>
+    <g data-step="2"><path class="edge" marker-end="url(#ah)" d="M490 57H558"/></g>
+    <g data-step="2" class="box auto"><rect x="560" y="24" width="200" height="66" rx="8"/><text x="660" y="52">S_N solve, three separate</text><text x="660" y="71">reflective planes</text></g>
+    <g data-step="2"><path class="edge" marker-end="url(#ah)" d="M490 186H640V92"/><text class="elabel" x="560" y="179">cross-sections</text></g>
+
+    <g data-step="3"><path class="edge" marker-end="url(#ah)" d="M120 90V341H288"/><text class="elabel" x="204" y="333">same STEP, faceted</text></g>
+    <g data-step="3"><path class="edge" marker-end="url(#ah)" d="M390 232V306"/></g>
+    <g data-step="3" class="box probe"><rect x="290" y="308" width="200" height="66" rx="8"/><text x="390" y="336">Monte Carlo cross-check,</text><text x="390" y="355">one-group mode</text></g>
+
+    <g data-step="4"><path class="edge" marker-end="url(#ah)" d="M490 341H558"/></g>
+    <g data-step="4"><path class="edge" marker-end="url(#ah)" d="M700 90V306"/></g>
+    <g data-step="4"><path class="edge" marker-end="url(#ah)" d="M490 214H620V306"/><text class="elabel" x="555" y="230">reference</text></g>
+    <g data-step="4" class="box auto"><rect x="560" y="308" width="200" height="66" rx="8"/><text x="660" y="336">Compare with reference;</text><text x="660" y="355">flag bad numbers</text></g>
+  </svg>
+  </div>
+
+  <div class="legend">
+    <span><span class="sw a"></span>Automated by Pocket</span>
+    <span><span class="sw m"></span>Manual, with handoff receipt</span>
+    <span><span class="sw d"></span>Hash-pinned data</span>
+    <span><span class="sw p"></span>Uncertain, needs a probe</span>
+  </div>
+
+  <div class="cap" data-cap="1">
+    <p><strong>Step 1: the handoff.</strong> The CAD engineer hands over a STEP file and I do not drive the CAD tool. Read with default settings, the mesher sees your file as a 1000 × 1000 × 1000 box and raises nothing. Told to convert to centimetres, it sees 100 × 100 × 100. So the handoff carries a receipt that states the length unit, and an automatic check compares box size, solid names and volumes against the problem statement before any mesh is made.</p>
+    <p class="ev">evidence: kobayashi_p1.step line 41 (SI_UNIT(.MILLI.,.METRE.)); prep/surface-probe/gmsh_step_probe.out.json (bbox_default_import, bbox_target_unit_CM, solids)</p>
+  </div>
+  <div class="cap" data-cap="2">
+    <p><strong>Step 2: data and the S_N solve.</strong> Tables 1 and 2 are pinned by hash and read as data, so the void keeps Σt = 1e-4 cm⁻¹. The mesh check found your three solid names still attached after the solids were made conformal, and six outer planes. Each of x = 0, y = 0 and z = 0 becomes its own named reflective boundary; the three far faces are vacuum. The solver documentation takes one entry per named boundary, which matches what you asked for. This path is documented end to end but has not been run.</p>
+    <p class="ev">evidence: prep/shelf-inventory.tsv; prep/surface-probe/gmsh_step_probe.out.json (names_after_fragment, outer_faces_by_plane); prep/scout-findings.md (OpenSn table)</p>
+  </div>
+  <div class="cap" data-cap="3">
+    <p><strong>Step 3: the Monte Carlo cross-check.</strong> The same STEP file is faceted and scaled by 0.1, then run in one-group mode with the Table 1 data. This box is marked uncertain because the public documentation does not say whether faceted CAD geometry works in one-group mode, and shows no example of mixed reflective and vacuum planes around it. If the probe fails I will report the gap. I will not fall back to continuous energy.</p>
+    <p class="ev">evidence: prep/scout-findings.md (OpenMC and cad_to_dagmc, "not documented either way"); your reply (one-group mode)</p>
+  </div>
+  <div class="cap" data-cap="4">
+    <p><strong>Step 4: compare and flag.</strong> Both results are compared with Table 2 at the 28 points. A Monte Carlo tally above 5% relative error is flagged, using your figure. How an S_N point gets flagged for ray effects is <span class="unk">Unknown</span> and waits on your answer below.</p>
+    <p class="ev">evidence: reference_flux_p1.json; your reply (handoff 3)</p>
+  </div>
+</div>
+
+<p><strong>What this map leaves out:</strong> mesh size and quality choices, the angular set and convergence settings, variance reduction for the deep shield, run times and hardware, Kobayashi Problems 2 and 3, multi-group and real cross-section libraries, your commercial chain itself, and the format of anything you report onward.</p>
+
+<h2>3. Your three handoffs, and what would catch each</h2>
+<div class="panel scroll">
+<table>
+<thead><tr><th>Handoff that bites</th><th>Proposed catch</th><th>Basis</th></tr></thead>
+<tbody>
+<tr><td>mm to cm</td><td>Receipt states the unit. Automatic check of box size and volumes against the problem statement. A STEP file with no declared unit is refused.</td><td>Checked on your file: 1000 as read, 100 once converted</td></tr>
+<tr><td>Tags lost from CAD to mesh to solver</td><td>After meshing, every named solid must own a region tag, the void must be present, and each outer plane must be its own named boundary. Planes are never merged.</td><td>Names survive in a read-only check; the meshed file has not been produced yet</td></tr>
+<tr><td>Unflagged bad numbers</td><td>Monte Carlo: relative error above 5% is flagged at the point. S_N: <span class="unk">Unknown</span> until you tell me how you judge ray effects.</td><td>Your reply; the solver keeps an unconverged result with only a warning, so convergence is checked explicitly</td></tr>
+</tbody>
+</table>
+</div>
+
+<h2>4. Does Pocket's calculation checker fit this work?</h2>
+<p><strong>Partly.</strong> Pocket normally routes every reported number through a checker that carries units. I tested it against the units and magnitudes in your folder.</p>
+<div class="panel scroll">
+<table>
+<thead><tr><th>Tested</th><th>Result</th></tr></thead>
+<tbody>
+<tr><td>Same optical thickness from 50 cm, 500 mm and 0.5 m</td><td><span class="ok">Fits.</span> 5.0 each time</td></tr>
+<tr><td>A length given with no unit</td><td><span class="ok">Fits.</span> Refused</td></tr>
+<tr><td>A length labelled cm that was really mm</td><td>Cannot be caught by arithmetic. Optical thickness 50, no complaint. Only the receipt and geometry check catch this.</td></tr>
+<tr><td>Cross-sections in cm⁻¹</td><td><span class="gap">Does not fit.</span> Only m⁻¹ and mm⁻¹ exist</td></tr>
+<tr><td>Flux in cm⁻² s⁻¹, source in cm⁻³ s⁻¹</td><td><span class="gap">Does not fit.</span> No such units</td></tr>
+<tr><td>Telling Σt from Σs, or flux from current</td><td><span class="gap">Does not fit</span> by unit. A written rule (Σs ≤ Σt) does refuse a swap</td></tr>
+<tr><td>Values from 6 down to 3e-6 and far smaller</td><td><span class="ok">Fits.</span> Full precision; note it returns exactly 0 at optical thickness 800 with no flag</td></tr>
+<tr><td>Calculated over reference with combined one-sigma</td><td><span class="ok">Fits</span>, written out by hand. There is no built-in uncertainty type</td></tr>
+<tr><td>Flux at a point inside a 3D mesh</td><td>Not its job. That comes from each solver's own output</td></tr>
+</tbody>
+</table>
+</div>
+<p class="ev">evidence: prep/kernel-fit-probe.md; prep/kernel-probe/</p>
+
+<h2>5. One open choice: where your units are enforced</h2>
+<p>The checker's unit list lives in a part of Pocket that this trial may not change. That leaves a real choice about how the build proceeds.</p>
+<div class="panel">
+  <div class="bar" role="group" aria-label="Variants">
+    <button type="button" class="vbtn" data-v="a" aria-pressed="true">A · Use the checker as it is</button>
+    <button type="button" class="vbtn" data-v="b" aria-pressed="false">B · Tools hold your units</button>
+    <button type="button" class="vbtn" data-v="c" aria-pressed="false">C · Wait for new units</button>
+  </div>
+  <div class="variant on" data-v="a">
+    <dl>
+      <dt>Gain</dt><dd>Nothing new to build. Every number passes through one checker.</dd>
+      <dt>Cost</dt><dd>Cross-sections are typed in mm⁻¹, so the shield reads 0.01 where your table says 0.1. That puts the mm and cm trap back into the data. Flux carries no unit label.</dd>
+      <dt>Day to day</dt><dd>You would read calculation sheets in units you do not work in.</dd>
+    </dl>
+  </div>
+  <div class="variant" data-v="b">
+    <dl>
+      <dt>Gain</dt><dd>cm, cm⁻¹ and cm⁻² s⁻¹ everywhere, fixed in each tool's declared inputs and outputs. Table 1 is read exactly as printed.</dd>
+      <dt>Cost</dt><dd>Units are enforced by the tools, and the checker handles only the unitless comparison numbers. Two places hold numbers instead of one.</dd>
+      <dt>Day to day</dt><dd>You see your own units throughout. The comparison with the reference still comes from the checker.</dd>
+    </dl>
+  </div>
+  <div class="variant" data-v="c">
+    <dl>
+      <dt>Gain</dt><dd>The cleanest result: one checker that knows cm⁻¹, flux and source-rate units.</dd>
+      <dt>Cost</dt><dd>Blocked on a change I am not permitted to make in this trial. The build waits on someone else.</dd>
+      <dt>Day to day</dt><dd>Nothing runs until the units exist.</dd>
+    </dl>
+  </div>
+</div>
+<p><strong>My pick on this Pocket design choice:</strong> B now, with the missing units logged as a gap for whoever owns the checker, so C can follow without rework. This is yours to overrule.</p>
+
+<h2>6. Already settled (constraints, not options)</h2>
+<ul>
+  <li>The STEP file is a manual handoff with a receipt and a check. I do not drive the CAD tool.</li>
+  <li>The void is a material with Σt = 1e-4 cm⁻¹.</li>
+  <li>Each symmetry plane is its own reflective boundary.</li>
+  <li>The Monte Carlo cross-check runs in one-group mode on the faceted CAD.</li>
+  <li>This folder is public. Client work is controlled and stays in an approved local enclave; markings are kept, and web lookups stay isolated from job files.</li>
+  <li>A later agent must be able to run a new case by calling declared tools, with no shell and no hand-written solver or mesh code.</li>
+  <li>The working notes are one short page, not a library of guides.</li>
+  <li>Everything built stays inside this trial's workspace.</li>
+</ul>
+
+<h2>7. Waiting on you</h2>
+<p>Please correct anything above that is wrong. Corrections are logged as you give them. Beyond that, two questions:</p>
+<div class="q"><strong>1.</strong> When you compare a result with the Table 2 reference at a point, what makes you accept it, and what makes you call an S_N result ray-effect contaminated?</div>
+<div class="q"><strong>2.</strong> What do you want working first: which case, and with which solver or solvers?</div>
+<p class="muted">The other Unknown rows in section 1 can wait until these two are answered.</p>
+
+</main>
+<script>
+(function(){
+  var flow=document.getElementById('flow'),back=document.getElementById('back'),next=document.getElementById('next'),count=document.getElementById('count'),max=4;
+  function set(n){flow.setAttribute('data-current',n);count.textContent='Step '+n+' of '+max;back.disabled=n<=1;next.disabled=n>=max;}
+  back.addEventListener('click',function(){set(Math.max(1,+flow.getAttribute('data-current')-1));});
+  next.addEventListener('click',function(){set(Math.min(max,+flow.getAttribute('data-current')+1));});
+  set(1);
+  var btns=document.querySelectorAll('.vbtn'),vars=document.querySelectorAll('.variant');
+  btns.forEach(function(b){b.addEventListener('click',function(){
+    btns.forEach(function(x){x.setAttribute('aria-pressed',x===b?'true':'false');});
+    vars.forEach(function(v){v.classList.toggle('on',v.getAttribute('data-v')===b.getAttribute('data-v'));});
+  });});
+})();
+</script>
+</body>
+</html>
